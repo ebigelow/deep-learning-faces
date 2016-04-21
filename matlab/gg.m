@@ -1,5 +1,5 @@
 function [] = gg( gpunumber )
 global GPUID;
 global FERMI;
-GPUID = 3;
+GPUID = 1;
 FERMI = 1;

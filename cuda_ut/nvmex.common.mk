@@ -4,8 +4,8 @@
 #
 # Define installation location for CUDA and compilation flags compatible
 # with the CUDA include files.
-CUDAHOME    = /u/tang/local/cuda/cuda-5.0
-CUDASDKHOME = /u/tang/local/cuda/cuda-5.0/samples
+CUDAHOME    = /usr/local/cuda-7.5/
+CUDASDKHOME = /usr/local/cuda-7.5/samples
 MEXCUDAHOME = ../../Matlab_Cuda_1.1
 CUDA_UT_HOME = ../
 
@@ -19,7 +19,7 @@ CFLAGS      += -fPIC -D_GNU_SOURCE -pthread -fexceptions
 COPTIMFLAGS += -O3 -funroll-loops -msse2
 
 # Define installation location for MATLAB.
-export MATLAB = /pkgs/matlab-80
+export MATLAB = /u/yli/R2013a
 
 MEX           = $(MATLAB)/bin/mex
 MEXEXT        = .$(shell $(MATLAB)/bin/mexext)
@@ -38,7 +38,7 @@ INCLUDELIB += -lcublas -lcurand -lcudart
 
 ifeq ($(USECULA),1)
   INCLUDEDIR += -I$(CULAHOME)/include
-  INCLUDELIB += -lcula_core -lcula_lapack -L$(CULAHOME)/lib64 -Wl,-rpath,$(CULAHOME)/lib64  
+  INCLUDELIB += -lcula_core -lcula_lapack -L$(CULAHOME)/lib64 -Wl,-rpath,$(CULAHOME)/lib64
 endif
 
 ifeq ($(USEBOOST),1)
@@ -66,7 +66,7 @@ endif
 #  add this: -DCLMATCUDANOSAFE flag to not do error checking during runtime
 
 
-all: $(MEXFILES:.mex=$(MEXEXT)) 
+all: $(MEXFILES:.mex=$(MEXEXT))
 
 clean:
 	rm -f $(MEXFILES:.mex=$(MEXEXT))
@@ -87,7 +87,7 @@ clean:
 
 %.mexa64: %.cu
 	$(NVMEX) -f $(MEXCUDAHOME)/nvopts.sh $< $(INCLUDEDIR) $(INCLUDELIB) \
-	verbose=1 OUTDIR='$(OUTBINDIR)' user_flags='$(NVCCFLAGS)' -o $(patsubst %.mexa64,%$(DBL_EXT),$@) 
+	verbose=1 OUTDIR='$(OUTBINDIR)' user_flags='$(NVCCFLAGS)' -o $(patsubst %.mexa64,%$(DBL_EXT),$@)
 
 .c.mexmaci:
 	$(MEX) CFLAGS='$(CFLAGS)' COPTIMFLAGS='$(COPTIMFLAGS)' $< \
@@ -96,5 +96,3 @@ clean:
 .cu.mexmaci:
 	$(NVMEX) -f $(MEXCUDAHOME)/nvopts.sh $< $(INCLUDEDIR) $(INCLUDELIB) \
 	verbose=1 OUTDIR='$(OUTBINDIR)' user_flags='$(NVCCFLAGS)'
-
-

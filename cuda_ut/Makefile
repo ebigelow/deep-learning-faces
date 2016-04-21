@@ -2,29 +2,29 @@
 #
 # Copyright 1993-2012 NVIDIA Corporation.  All rights reserved.
 #
-# NOTICE TO USER:   
+# NOTICE TO USER:
 #
-# This source code is subject to NVIDIA ownership rights under U.S. and 
-# international Copyright laws.  
+# This source code is subject to NVIDIA ownership rights under U.S. and
+# international Copyright laws.
 #
-# NVIDIA MAKES NO REPRESENTATION ABOUT THE SUITABILITY OF THIS SOURCE 
-# CODE FOR ANY PURPOSE.  IT IS PROVIDED "AS IS" WITHOUT EXPRESS OR 
-# IMPLIED WARRANTY OF ANY KIND.  NVIDIA DISCLAIMS ALL WARRANTIES WITH 
-# REGARD TO THIS SOURCE CODE, INCLUDING ALL IMPLIED WARRANTIES OF 
-# MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE.   
-# IN NO EVENT SHALL NVIDIA BE LIABLE FOR ANY SPECIAL, INDIRECT, INCIDENTAL, 
-# OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS 
-# OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE 
-# OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE 
-# OR PERFORMANCE OF THIS SOURCE CODE.  
+# NVIDIA MAKES NO REPRESENTATION ABOUT THE SUITABILITY OF THIS SOURCE
+# CODE FOR ANY PURPOSE.  IT IS PROVIDED "AS IS" WITHOUT EXPRESS OR
+# IMPLIED WARRANTY OF ANY KIND.  NVIDIA DISCLAIMS ALL WARRANTIES WITH
+# REGARD TO THIS SOURCE CODE, INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE.
+# IN NO EVENT SHALL NVIDIA BE LIABLE FOR ANY SPECIAL, INDIRECT, INCIDENTAL,
+# OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+# OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE
+# OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE
+# OR PERFORMANCE OF THIS SOURCE CODE.
 #
-# U.S. Government End Users.  This source code is a "commercial item" as 
-# that term is defined at 48 C.F.R. 2.101 (OCT 1995), consisting  of 
-# "commercial computer software" and "commercial computer software 
-# documentation" as such terms are used in 48 C.F.R. 12.212 (SEPT 1995) 
-# and is provided to the U.S. Government only as a commercial end item.  
-# Consistent with 48 C.F.R.12.212 and 48 C.F.R. 227.7202-1 through 
-# 227.7202-4 (JUNE 1995), all U.S. Government End Users acquire the 
+# U.S. Government End Users.  This source code is a "commercial item" as
+# that term is defined at 48 C.F.R. 2.101 (OCT 1995), consisting  of
+# "commercial computer software" and "commercial computer software
+# documentation" as such terms are used in 48 C.F.R. 12.212 (SEPT 1995)
+# and is provided to the U.S. Government only as a commercial end item.
+# Consistent with 48 C.F.R.12.212 and 48 C.F.R. 227.7202-1 through
+# 227.7202-4 (JUNE 1995), all U.S. Government End Users acquire the
 # source code with only those rights set forth herein.
 #
 ################################################################################
@@ -56,10 +56,10 @@ endif
 DARWIN = $(strip $(findstring DARWIN, $(OSUPPER)))
 
 # Location of the CUDA Toolkit binaries and libraries
-CUDA_PATH       ?= /u/tang/local/cuda/cuda-5.0
+CUDA_PATH       ?= /usr/local/cuda-7.5 /usr/local/cuda-7.5/bin
 CUDA_INC_PATH   ?= $(CUDA_PATH)/include
 CUDA_BIN_PATH   ?= $(CUDA_PATH)/bin
-CUDA_SAMPLES_PATH ?= /u/tang/local/cuda/cuda-5.0/samples
+CUDA_SAMPLES_PATH ?= /usr/local/cuda-7.5/samples
 
 ifneq ($(DARWIN),)
   CUDA_LIB_PATH  ?= $(CUDA_PATH)/lib
@@ -83,9 +83,9 @@ GENCODE_SM30    := -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,
 GENCODE_FLAGS   := $(GENCODE_SM20) $(GENCODE_SM30)
 
 # OS-specific build flags
-ifneq ($(DARWIN),) 
+ifneq ($(DARWIN),)
       LDFLAGS   := -Xlinker -rpath $(CUDA_LIB_PATH) -L$(CUDA_LIB_PATH) -lcudart
-      CCFLAGS   := -arch $(OS_ARCH) 
+      CCFLAGS   := -arch $(OS_ARCH)
 else
   ifeq ($(OS_SIZE),32)
       LDFLAGS   := -L$(CUDA_LIB_PATH)
@@ -115,7 +115,7 @@ endif
 # Extra user flags
 EXTRA_NVCCFLAGS += -Xcompiler "-fPIC -Wall -pthread -m64 -fexceptions -fno-strict-aliasing" #-fno-implicit-templates
 EXTRA_NVCCFLAGS += -Xcompiler "-O3 -msse2 -DNDEBUG" -use_fast_math -ftz=true -prec-div=false -prec-sqrt=false
-EXTRA_LDFLAGS   += -O3 -m64 -fexceptions -fno-strict-aliasing 
+EXTRA_LDFLAGS   += -O3 -m64 -fexceptions -fno-strict-aliasing
 
 
 # Common includes and paths for CUDA
@@ -123,7 +123,7 @@ INCLUDES      := -I$(CUDA_INC_PATH) -I$(CUDA_SAMPLES_PATH)/common/inc -I./includ
 
 OBJDIR := obj/$(OS_ARCH)/$(TARGET)
 LIBDIR := lib
-		
+
 # Target rules
 all: objects \
 	 build
@@ -135,7 +135,7 @@ objects: $(OBJDIR)/cu_util.o \
 		$(OBJDIR)/mlp.o \
 		$(OBJDIR)/cu_conv.o \
 		$(OBJDIR)/cu_jitters.o \
-			
+
 # object files
 $(OBJDIR)/cu_util.o: include/cu_util.cu include/cu_util.h
 	$(NVCC) $(NVCCFLAGS) $(EXTRA_NVCCFLAGS) $(GENCODE_FLAGS) $(INCLUDES) -o $@ -c $<
@@ -145,10 +145,10 @@ $(OBJDIR)/cu_gpu_rand.o: include/cu_gpu_rand.cu include/cu_gpu_rand.h
 
 $(OBJDIR)/cu_matrix_ops.o: include/cu_matrix_ops.cu include/cu_matrix_ops.h
 	$(NVCC) $(NVCCFLAGS) $(EXTRA_NVCCFLAGS) $(GENCODE_FLAGS) $(INCLUDES) -o $@ -c $<
-	
+
 $(OBJDIR)/cu_dnn_ops.o: include/cu_dnn_ops.cu include/cu_dnn_ops.h
 	$(NVCC) $(NVCCFLAGS) $(EXTRA_NVCCFLAGS) $(GENCODE_FLAGS) $(INCLUDES) -o $@ -c $<
-	
+
 $(OBJDIR)/mlp.o: include/mlp.cu include/mlp.h
 	$(NVCC) $(NVCCFLAGS) $(EXTRA_NVCCFLAGS) $(GENCODE_FLAGS) $(INCLUDES) -o $@ -c $<
 
@@ -156,15 +156,15 @@ $(OBJDIR)/cu_conv.o: modules/conv/cu_conv.cu modules/conv/cu_conv.h
 	$(NVCC) $(NVCCFLAGS) $(EXTRA_NVCCFLAGS) $(GENCODE_FLAGS) $(INCLUDES) -o $@ -c $<
 
 $(OBJDIR)/cu_jitters.o: modules/conv/cu_jitters.cu modules/conv/cu_jitters.h
-	$(NVCC) $(NVCCFLAGS) $(EXTRA_NVCCFLAGS) $(GENCODE_FLAGS) $(INCLUDES) -o $@ -c $<	
+	$(NVCC) $(NVCCFLAGS) $(EXTRA_NVCCFLAGS) $(GENCODE_FLAGS) $(INCLUDES) -o $@ -c $<
 
 
 build: $(LIBDIR)/libCudaUT.so
 
 $(LIBDIR)/libCudaUT.so: $(OBJDIR)/cu_util.o $(OBJDIR)/cu_gpu_rand.o \
 						$(OBJDIR)/cu_matrix_ops.o $(OBJDIR)/cu_dnn_ops.o \
-						$(OBJDIR)/mlp.o $(OBJDIR)/cu_conv.o $(OBJDIR)/cu_jitters.o  
-	$(GCC) $(CCFLAGS) -shared -o $@ $+ $(LDFLAGS) $(EXTRA_LDFLAGS)	
+						$(OBJDIR)/mlp.o $(OBJDIR)/cu_conv.o $(OBJDIR)/cu_jitters.o
+	$(GCC) $(CCFLAGS) -shared -o $@ $+ $(LDFLAGS) $(EXTRA_LDFLAGS)
 
 clean:
 	rm -f $(OBJDIR)/*.o
